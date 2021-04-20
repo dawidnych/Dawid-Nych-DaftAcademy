@@ -9,12 +9,12 @@ def root():
 
 
 @app.get("/{method}")
-def method_endpoint(method, response: Response):
-    tmp = method.upper()
-    if tmp == "GET" or "DELETE" or "OPTION" or "PUT":
+def method_endpoint(method: str, response: Response):
+    lst = ["GET", "PUT", "OPTIONS", "DELETE"]
+    if method.upper() in lst:
         response.status_code = status.HTTP_200_OK
         return {"method": f"{method}".upper()}
-    elif tmp == "POST":
+    elif method.upper() == "POST":
         response.status_code = status.HTTP_201_CREATED
         return {"method": f"{method}".upper()}
     else:

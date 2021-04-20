@@ -11,12 +11,16 @@ def test_read_main():
     assert response.json() == {"message": "Hello world!"}
 
 
+@pytest.mark.parametrize("method", ["GET", "PUT", "OPTIONS", "DELETE", "POST", "error"])
 def test_method_func(method):
     response = client.get(f"/{method}")
-    if method.upper() == "GET" or "DELETE" or "OPTION" or "PUT":
+    lst = ["GET", "PUT", "OPTIONS", "DELETE"]
+    if method.upper() in lst:
         assert response.status_code == 200
+        assert response.json() == {"method": f"{method}".upper()}
     elif method.upper() == "POST":
         assert response.status_code == 201
+        assert response.json() == {"method": f"{method}".upper()}
     else:
         assert response.status_code == 406
-    assert response.text == {"method": f"{method}".upper()}
+        assert response.json() == "Wrong method!"
