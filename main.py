@@ -1,9 +1,24 @@
 from fastapi import FastAPI, Response, status
+from pydantic import BaseModel
+from datetime import date
 
 app = FastAPI()
 
 
-@app.get("/")
+class RegisterIn(BaseModel):
+    name: str
+    surname: str
+
+
+class RegisterOut(BaseModel):
+    id: int
+    name: str
+    surname: str
+    register_date: date
+    vaccination_date: date
+
+
+@app.get("/", status_code=200)
 def root():
     return {"message": "Hello world!"}
 
@@ -21,4 +36,10 @@ def method_endpoint(method: str, response: Response):
         response.status_code = status.HTTP_406_NOT_ACCEPTABLE
         return "Wrong method!"
 
+
+
+
+# @app.post("/register")
+# def register_method():
+#     return
 
