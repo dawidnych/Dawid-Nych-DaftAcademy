@@ -13,19 +13,19 @@ def root():
 
 
 # # 1.2
-# @app.route("/method")
-# def method_endpoint(response: Response, request: Request):
-#     tmp = request.method
-#     lst = ["GET", "PUT", "OPTIONS", "DELETE"]
-#     if tmp in lst:
-#         response.status_code = status.HTTP_200_OK
-#         return {"method": f"{tmp}"}
-#     elif tmp == "POST":
-#         response.status_code = status.HTTP_201_CREATED
-#         return {"method": f"{tmp}"}
+@app.api_route("/method", methods=["GET", "PUT", "OPTIONS", "DELETE", "POST"])
+def method_endpoint(response: Response, request: Request):
+    tmp = request.method
+    lst = ["GET", "PUT", "OPTIONS", "DELETE"]
+    if tmp in lst:
+        response.status_code = status.HTTP_200_OK
+        return {"method": f"{tmp}"}
+    elif tmp == "POST":
+        response.status_code = status.HTTP_201_CREATED
+        return {"method": f"{tmp}"}
 
 
-# #1.3 pass i pass_hash jako optional
+# #1.3
 @app.get("/auth")
 def password_check(password: Optional[str], password_hash: Optional[str], response: Response):
     h = hashlib.sha512(password.encode('utf-8'))
