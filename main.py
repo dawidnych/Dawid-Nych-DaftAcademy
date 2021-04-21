@@ -65,9 +65,7 @@ def register_method(user: RegisterIn):
     global id
     id += 1
     regex = re.compile('[^a-zA-Z]')
-    # regex.sub('', user.name)
-    # regex.sub('', user.surname)
-    delta = len(regex.sub('', user.surname).replace(" ", "")) + len(regex.sub('', user.name).replace(" ", ""))
+    delta = len(regex.sub('', user.name).replace(" ", "")) + len(regex.sub('', user.surname).replace(" ", ""))
     vacc_date = datetime.today() + timedelta(days=delta)
 
     x = RegisterOut(
