@@ -21,6 +21,4 @@ def test_method_func(method):
     elif method.upper() == "POST":
         assert response.status_code == 201
         assert response.json() == {"method": f"{method}".upper()}
-    else:
-        assert response.status_code == 406
-        assert response.json() == "Wrong method!"
+
