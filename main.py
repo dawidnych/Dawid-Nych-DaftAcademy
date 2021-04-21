@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import date, datetime, timedelta
 from typing import Optional
 import hashlib
+import re
 
 app = FastAPI()
 
@@ -63,7 +64,10 @@ my_dict = {}
 def register_method(user: RegisterIn):
     global id
     id += 1
-    delta = len(user.name.replace(" ", "")) + len(user.surname.replace(" ", ""))
+    regex = re.compile('[^a-zA-Z]')
+    # regex.sub('', user.name)
+    # regex.sub('', user.surname)
+    delta = len(regex.sub('', user.surname).replace(" ", "")) + len(regex.sub('', user.name).replace(" ", ""))
     vacc_date = datetime.today() + timedelta(days=delta)
 
     x = RegisterOut(
