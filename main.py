@@ -86,3 +86,4 @@ def get_patient_id(id: int, response: Response):
         return my_dict[id]
     elif id not in my_dict.keys():
         response.status_code = status.HTTP_404_NOT_FOUND
+
