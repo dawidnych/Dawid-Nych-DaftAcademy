@@ -63,7 +63,7 @@ my_dict = {}
 def register_method(user: RegisterIn):
     global id
     id += 1
-    delta = len(user.name) + len(user.surname)
+    delta = len(user.name.replace(" ", "")) + len(user.surname.replace(" ", ""))
     vacc_date = datetime.today() + timedelta(days=delta)
 
     x = RegisterOut(
