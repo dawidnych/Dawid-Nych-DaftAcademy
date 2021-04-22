@@ -32,7 +32,7 @@ def password_check(password: Optional[str], password_hash: Optional[str], respon
     h = hashlib.sha512(password.encode('utf-8'))
     if h.hexdigest() == password_hash:
         response.status_code = status.HTTP_204_NO_CONTENT
-    elif password == "" or password_hash == "" or h.hexdigest() != password_hash or password is None\
+    elif password == "" or password_hash == "" or h.hexdigest() != password_hash or password is None \
             or password_hash is None:
         response.status_code = status.HTTP_401_UNAUTHORIZED
 
@@ -50,6 +50,7 @@ class RegisterOut(BaseModel):
     register_date: date
     vaccination_date: date
 
+
 # Body request dla testu w Postmanie
 user_data = {
     "name": "Jan",
@@ -65,7 +66,8 @@ def register_method(user: RegisterIn):
     global id
     id += 1
     regex = re.compile('[^a-zA-Z]')
-    delta = len(regex.sub('', user.name).replace(" ", "")) + len(regex.sub('', user.surname).replace(" ", ""))
+    delta = len(regex.sub('', user.name).replace(" ", "")) + len(
+        regex.sub('', user.surname).replace(" ", ""))
     vacc_date = datetime.today() + timedelta(days=delta)
 
     x = RegisterOut(
@@ -78,14 +80,13 @@ def register_method(user: RegisterIn):
     return x
 
 
-#1.5
+# 1.5
 @app.get("/patient/{id}")
 def get_patient_id(id: int, response: Response):
     if id < 1:
-      response.status_code = status.HTTP_400_BAD_REQUEST
+        response.status_code = status.HTTP_400_BAD_REQUEST
     elif id in my_dict.keys():
         response.status_code = status.HTTP_200_OK
         return my_dict[id]
     elif id not in my_dict.keys():
         response.status_code = status.HTTP_404_NOT_FOUND
-
