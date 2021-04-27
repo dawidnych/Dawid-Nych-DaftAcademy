@@ -84,3 +84,41 @@ def second_func():
 
 
 # 2.4
+class A:
+    pass
+
+
+def add_class_method(cls):
+    def wrapper(func):
+        setattr(cls, func.__name__, func)
+        return func
+    return wrapper
+
+
+@add_class_method(A)
+def foo():
+    return "Hello!"
+
+
+def add_instance_method(cls):
+    def wrapper(func):
+        def instance_method(self, *args, **kwargs):
+            return func(*args, **kwargs)
+        o = cls()
+        cls2 = o.__class__
+        o2 = cls2
+        setattr(o2, func.__name__, instance_method)
+        return func
+    return wrapper
+
+
+@add_instance_method(A)
+def bar():
+    return "Hello again!"
+
+
+print(A.foo())
+print(A().bar())
+assert A.foo() == "Hello!"
+assert A().bar() == "Hello again!"
+
