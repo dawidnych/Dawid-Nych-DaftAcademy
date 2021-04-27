@@ -1,6 +1,6 @@
 import unittest
 
-from main import greetings
+from task_2 import greetings
 
 
 class ExampleTest(unittest.TestCase):

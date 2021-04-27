@@ -1,6 +1,6 @@
 import unittest
 
-from main import add_class_method, add_instance_method
+from task_2 import add_class_method, add_instance_method
 
 
 class ExampleClass:

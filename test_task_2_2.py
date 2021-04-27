@@ -1,6 +1,6 @@
 import unittest
 
-from main import format_output
+from task_2 import format_output
 
 
 class ExampleTest(unittest.TestCase):
