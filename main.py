@@ -8,12 +8,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 
-@app.get("/")
-def default():
-    return "Hello!"
-
-
 @app.get("/hello", response_class=HTMLResponse)
 def hello_func(request: Request):
-    return templates.TemplateResponse("task_1.html.j2", {
+    return templates.TemplateResponse("task_3_1.html.j2", {
         "request": request, "date": datetime.today().strftime('%Y-%m-%d')})
