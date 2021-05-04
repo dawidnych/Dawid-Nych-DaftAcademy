@@ -1,7 +1,7 @@
 import secrets
 
 from fastapi import FastAPI, Response, Request, status, Depends, HTTPException, Cookie
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from datetime import datetime
@@ -59,7 +59,7 @@ def welcome_session(session_token: str = Cookie(None), format: Optional[str] = N
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         if format is None:
-            return "Welcome!"
+            return PlainTextResponse(content="Welcome!", status_code=200)
         elif format.lower() == "json":
             json = {"message": "Welcome!"}
             return JSONResponse(content=json, status_code=200)
@@ -74,7 +74,7 @@ def welcome_session(session_token: str = Cookie(None), format: Optional[str] = N
             """
             return HTMLResponse(content=html_content, status_code=200)
         else:
-            return "Welcome!"
+            return PlainTextResponse(content="Welcome!", status_code=200)
 
 
 @app.get("/welcome_token")
@@ -83,7 +83,7 @@ def welcome_token(token: str, format: Optional[str] = None):
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         if format is None:
-            return "Welcome!"
+            return PlainTextResponse(content="Welcome!", status_code=200)
         elif format.lower() == "json":
             json = {"message": "Welcome!"}
             return JSONResponse(content=json, status_code=200)
@@ -98,4 +98,4 @@ def welcome_token(token: str, format: Optional[str] = None):
                         """
             return HTMLResponse(content=html_content, status_code=200)
         else:
-            return "Welcome!"
+            return PlainTextResponse(content="Welcome!", status_code=200)
