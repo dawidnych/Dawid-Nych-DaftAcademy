@@ -107,8 +107,7 @@ def logout_session(session_token: str = Cookie(None), format: Optional[str] = No
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         app.session_tokens.clear()
-        return RedirectResponse(f"http://127.0.0.1:8000/logged_out?format={format}",
-                                status_code=302)
+        return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 
 @app.delete("/logout_token")
@@ -117,8 +116,7 @@ def logout_token(token: str, format: Optional[str] = None):
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         app.tokens.clear()
-        return RedirectResponse(f"http://127.0.0.1:8000/logged_out?format={format}",
-                                status_code=302)
+        return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 
 @app.get("/logged_out")
