@@ -1,7 +1,7 @@
 import secrets
 
 from fastapi import FastAPI, Response, Request, status, Depends, HTTPException, Cookie
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from datetime import datetime
@@ -61,7 +61,8 @@ def welcome_session(session_token: str = Cookie(None), format: Optional[str] = N
         if format is None:
             return "Welcome!"
         elif format.lower() == "json":
-            return {"message": "Welcome!"}
+            json = {"message": "Welcome!"}
+            return JSONResponse(content=json, status_code=200)
         elif format.lower() == "html":
             html_content = """
             <html>
@@ -84,7 +85,8 @@ def welcome_token(token: str, format: Optional[str] = None):
         if format is None:
             return "Welcome!"
         elif format.lower() == "json":
-            return {"message": "Welcome!"}
+            json = {"message": "Welcome!"}
+            return JSONResponse(content=json, status_code=200)
         elif format.lower() == "html":
             html_content = """
                         <html>
