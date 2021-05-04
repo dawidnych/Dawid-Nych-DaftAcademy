@@ -1,7 +1,7 @@
 import secrets
 
 from fastapi import FastAPI, Response, Request, status, Depends, HTTPException, Cookie
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from datetime import datetime
@@ -99,3 +99,44 @@ def welcome_token(token: str, format: Optional[str] = None):
             return HTMLResponse(content=html_content, status_code=200)
         else:
             return PlainTextResponse(content="Welcome!", status_code=200)
+
+
+@app.delete("/logout_session")
+def logout_session(session_token: str = Cookie(None), format: Optional[str] = None):
+    if session_token not in app.session_tokens or session_token is None:
+        raise HTTPException(status_code=401, detail="Unauthorised")
+    else:
+        app.session_tokens.clear()
+        return RedirectResponse(f"http://127.0.0.1:8000/logged_out?format={format}",
+                                status_code=302)
+
+
+@app.delete("/logout_token")
+def logout_token(token: str, format: Optional[str] = None):
+    if token not in app.tokens or token is None:
+        raise HTTPException(status_code=401, detail="Unauthorised")
+    else:
+        app.tokens.clear()
+        return RedirectResponse(f"http://127.0.0.1:8000/logged_out?format={format}",
+                                status_code=302)
+
+
+@app.get("/logged_out")
+def logged_out(format: Optional[str] = None):
+    if format is None:
+        return PlainTextResponse(content="Logged out!", status_code=200)
+    elif format.lower() == "json":
+        json = {"message": "Logged out!"}
+        return JSONResponse(content=json, status_code=200)
+    elif format.lower() == "html":
+        html_content = """
+                    <html>
+                    <head></head>
+                    <body>
+                        <h1>Logged out!</h1>
+                    </body>
+                    </html>
+                    """
+        return HTMLResponse(content=html_content, status_code=200)
+    else:
+        return PlainTextResponse(content="Logged out!", status_code=200)
