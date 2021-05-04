@@ -78,7 +78,7 @@ def welcome_session(session_token: str = Cookie(None), format: Optional[str] = N
 
 @app.get("/welcome_token")
 def welcome_token(token: str, format: Optional[str] = None):
-    if token not in app.session_tokens:
+    if token not in app.tokens:
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         if format.lower() == "json":
