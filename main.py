@@ -33,7 +33,11 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
         )
     else:
         session_token = secrets.token_hex(16)
-        app.session_tokens.insert(0, session_token)
+        if len(app.session_tokens) < 3:
+            app.session_tokens.append(session_token)
+        else:
+            del app.session_tokens[0]
+            app.session_tokens.append(session_token)
         response.set_cookie(key="session_token", value=session_token)
 
 
@@ -49,7 +53,11 @@ def login_token(credentials: HTTPBasicCredentials = Depends(security)):
         )
     else:
         token_value = secrets.token_hex(16)
-        app.tokens.insert(0, token_value)
+        if len(app.tokens) < 3:
+            app.tokens.append(token_value)
+        else:
+            del app.tokens[0]
+            app.tokens.append(token_value)
         return {"token": token_value}
 
 
@@ -106,7 +114,7 @@ def logout_session(session_token: str = Cookie(None), format: Optional[str] = No
     if session_token not in app.session_tokens or session_token is None:
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
-        app.session_tokens.clear()
+        app.session_tokens.remove(session_token)
         return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 
@@ -115,7 +123,7 @@ def logout_token(token: str, format: Optional[str] = None):
     if token not in app.tokens or token is None:
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
-        app.tokens.clear()
+        app.tokens.remove(token)
         return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 
