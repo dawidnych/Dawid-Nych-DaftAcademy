@@ -55,7 +55,7 @@ def login_token(credentials: HTTPBasicCredentials = Depends(security)):
 
 @app.get("/welcome_session")
 def welcome_session(session_token: str = Cookie(None), format: Optional[str] = None):
-    if session_token not in app.session_tokens:
+    if session_token not in app.session_tokens or session_token is None:
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
         if format is None:
@@ -78,10 +78,12 @@ def welcome_session(session_token: str = Cookie(None), format: Optional[str] = N
 
 @app.get("/welcome_token")
 def welcome_token(token: str, format: Optional[str] = None):
-    if token not in app.tokens:
+    if token not in app.tokens or token is None:
         raise HTTPException(status_code=401, detail="Unauthorised")
     else:
-        if format.lower() == "json":
+        if format is None:
+            return "Welcome!"
+        elif format.lower() == "json":
             return {"message": "Welcome!"}
         elif format.lower() == "html":
             html_content = """
