@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from datetime import datetime
+from typing import Optional
 
 
 app = FastAPI()
@@ -50,3 +51,47 @@ def login_token(credentials: HTTPBasicCredentials = Depends(security)):
         token_value = secrets.token_hex(16)
         app.tokens.insert(0, token_value)
         return {"token": token_value}
+
+
+@app.get("/welcome_session")
+def welcome_session(session_token: str = Cookie(None), format: Optional[str] = None):
+    if session_token not in app.session_tokens:
+        raise HTTPException(status_code=401, detail="Unauthorised")
+    else:
+        if format is None:
+            return "Welcome!"
+        elif format.lower() == "json":
+            return {"message": "Welcome!"}
+        elif format.lower() == "html":
+            html_content = """
+            <html>
+            <head></head>
+            <body>
+                <h1>Welcome!</h1>
+            </body>
+            </html>
+            """
+            return HTMLResponse(content=html_content, status_code=200)
+        else:
+            return "Welcome!"
+
+
+@app.get("/welcome_token")
+def welcome_token(token: str, format: Optional[str] = None):
+    if token not in app.session_tokens:
+        raise HTTPException(status_code=401, detail="Unauthorised")
+    else:
+        if format.lower() == "json":
+            return {"message": "Welcome!"}
+        elif format.lower() == "html":
+            html_content = """
+                        <html>
+                        <head></head>
+                        <body>
+                            <h1>Welcome!</h1>
+                        </body>
+                        </html>
+                        """
+            return HTMLResponse(content=html_content, status_code=200)
+        else:
+            return "Welcome!"
