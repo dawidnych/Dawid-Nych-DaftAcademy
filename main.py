@@ -56,8 +56,7 @@ def product_ids():
 
 @app.get("/products/{id}")
 async def products(id: int):
-    product_id_lst = product_ids()
-    if id in product_id_lst:
+    if id in product_ids():
         app.db_connection.row_factory = sqlite3.Row
         product = app.db_connection.execute("SELECT ProductID, ProductName FROM Products "
                                             "WHERE ProductID = :id", {'id': id}).fetchone()
