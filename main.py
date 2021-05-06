@@ -38,4 +38,4 @@ async def customers():
     """).fetchall()
 
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
-        f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
+        f"{x['Address']}{x['PostalCode']}{x['City']}{x['Country']}"} for x in customers]}
