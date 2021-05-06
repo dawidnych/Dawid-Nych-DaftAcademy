@@ -46,12 +46,11 @@ async def customers():
 
 
 def product_ids():
-    app.db_connection.row_factory = sqlite3.Row
-    product = app.db_connection.execute("SELECT ProductID FROM Products").fetchall()
+    ids = app.db_connection.execute("SELECT ProductID FROM Products").fetchall()
     lst = []
-    for i in product:
-        for y in i:
-            lst.append(y)
+    for id in ids:
+        for value in id:
+            lst.append(value)
     return lst
 
 
@@ -66,4 +65,3 @@ async def products(id: int):
         return JSONResponse(content=json)
     else:
         raise HTTPException(status_code=404)
-
