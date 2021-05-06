@@ -33,10 +33,37 @@ async def categories():
 async def customers():
     app.db_connection.row_factory = sqlite3.Row
     customers = app.db_connection.execute("""
-    SELECT CustomerID, CompanyName, IFNULL(Address, '') Address, IFNULL(PostalCode, '') PostalCode, 
-    IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
+    SELECT CustomerID, CompanyName, Address, PostalCode, City, Country FROM Customers
     ORDER BY CustomerID
     """).fetchall()
+    # customers = app.db_connection.execute("""
+    # SELECT CustomerID, CompanyName, IFNULL(Address, '') Address, IFNULL(PostalCode, '') PostalCode,
+    # IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
+    # ORDER BY CustomerID
+    # """).fetchall()
 
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
         f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
+
+
+def product_ids():
+    app.db_connection.row_factory = sqlite3.Row
+    product = app.db_connection.execute("SELECT ProductID FROM Products").fetchall()
+    lst = []
+    for i in product:
+        for y in i:
+            lst.append(y)
+    return lst
+
+
+@app.get("/products/{id}")
+async def products(id: int):
+    product_id_lst = product_ids()
+    if id in product_id_lst:
+        app.db_connection.row_factory = sqlite3.Row
+        product = app.db_connection.execute("SELECT ProductID, ProductName FROM Products "
+                                            "WHERE ProductID = :id", {'id': id}).fetchone()
+        return {"id": product['ProductID'], "name": product['ProductName']}
+    else:
+        raise HTTPException(status_code=404)
+
