@@ -24,7 +24,6 @@ async def categories():
     categories = app.db_connection.execute("""
     SELECT CategoryID, CategoryName FROM Categories ORDER BY CategoryID
     """).fetchall()
-
     return {"categories": [{"id": x['CategoryID'], "name": x['CategoryName']} for x in categories]}
 
 
@@ -40,7 +39,6 @@ async def customers():
     # IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
     # ORDER BY CustomerID
     # """).fetchall()
-
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
         f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
 
