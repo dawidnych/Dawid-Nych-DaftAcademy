@@ -34,7 +34,7 @@ async def customers():
     app.db_connection.row_factory = sqlite3.Row
     customers = app.db_connection.execute("""
     SELECT CustomerID, CompanyName, Address, PostalCode, City, Country FROM Customers 
-    ORDER BY CustomerID DESC
+    ORDER BY CustomerID
     """).fetchall()
 
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
