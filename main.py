@@ -34,8 +34,12 @@ async def customers():
     app.db_connection.row_factory = sqlite3.Row
     customers = app.db_connection.execute("""
     SELECT CustomerID, CompanyName, Address, PostalCode, City, Country FROM Customers 
+    WHERE Address IS NOT NULL 
+    AND PostalCode IS NOT NULL
+    AND City IS NOT NULL
+    AND Country IS NOT NULL
     ORDER BY CustomerID
     """).fetchall()
 
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
-        " ".join(f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}".split())} for x in customers]}
+        f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
