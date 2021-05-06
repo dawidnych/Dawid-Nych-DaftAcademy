@@ -1,9 +1,8 @@
 import sqlite3
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import JSONResponse
 
-from typing import List
 
 app = FastAPI()
 
@@ -63,7 +62,8 @@ async def products(id: int):
         app.db_connection.row_factory = sqlite3.Row
         product = app.db_connection.execute("SELECT ProductID, ProductName FROM Products "
                                             "WHERE ProductID = :id", {'id': id}).fetchone()
-        return {"id": product['ProductID'], "name": product['ProductName']}
+        json = {"id": product['ProductID'], "name": product['ProductName']}
+        return JSONResponse(content=json)
     else:
         raise HTTPException(status_code=404)
 
