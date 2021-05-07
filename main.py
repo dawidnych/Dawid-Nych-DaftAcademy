@@ -29,20 +29,34 @@ async def categories():
 
 @app.get("/customers")
 async def customers():
+    # I. Jeśli wartość = null dodaje ją jako None do adresu:
     app.db_connection.row_factory = sqlite3.Row
+    customers = app.db_connection.execute("""
+        SELECT CustomerID, CompanyName, Address, PostalCode, City, Country FROM Customers
+        ORDER BY CustomerID
+        """).fetchall()
+
+    # II. Jeśli któraś wartość = null, zastępuje ją pustym stringiem
+    # app.db_connection.row_factory = sqlite3.Row
     # customers = app.db_connection.execute("""
     # SELECT CustomerID, CompanyName, IFNULL(Address, '') Address, IFNULL(PostalCode, '') PostalCode,
     # IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
     # ORDER BY CustomerID
     # """).fetchall()
-    customers = app.db_connection.execute("""
-    SELECT CustomerID, CompanyName, Address || ' ' || PostalCode || ' ' || City || ' ' || Country 
-    AS FullAddress FROM Customers
-    ORDER BY CustomerID
-    """).fetchall()
+
+    # III. Daje null jako adres, jeśli jedna z wartości jest null:
+    # customers = app.db_connection.execute("""
+    # SELECT CustomerID, CompanyName, Address || ' ' || PostalCode || ' ' || City || ' ' || Country
+    # AS FullAddress FROM Customers
+    # ORDER BY CustomerID
+    # """).fetchall()
+
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
-        x['FullAddress']} for x in customers]}
-        # " ".join(f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}".split())} for x in customers]}
+        # ad I i II:
+        " ".join(f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}".split())} for x in
+                          customers]}
+        # ad III:
+        # x['FullAddress']} for x in customers]}
 
 
 def product_ids():
