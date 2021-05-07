@@ -41,7 +41,7 @@ async def customers():
     customers = app.db_connection.execute("""
     SELECT CustomerID, CompanyName, IFNULL(Address, '') Address, IFNULL(PostalCode, '') PostalCode,
     IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
-    ORDER BY CustomerID
+    ORDER BY CAST(CustomerID as INTEGER)
     """).fetchall()
 
     # III. Daje null jako adres, jeśli jedna z wartości jest null:
@@ -68,3 +68,27 @@ async def products(id: int):
         json = {"id": product['ProductID'], "name": product['ProductName']}
         return JSONResponse(content=json)
     raise HTTPException(status_code=404)
+
+
+# # limit: int, offset: int,
+# @app.get("/employees")
+# async def employees(order: str = "EmployeeID"):
+#     app.db_connection.row_factory = sqlite3.Row
+#     if order != "EmployeeID":
+#         if order == "first_name":
+#             tmp = "FirstName"
+#         elif order == "last_name":
+#             tmp = "LastName"
+#         elif order == "city":
+#             tmp = "City"
+#         else:
+#             raise HTTPException(status_code=400)
+#     else:
+#         tmp = "EmployeeID"
+#
+#     employees = app.db_connection.execute("""
+#     SELECT EmployeeID, LastName, FirstName, City FROM Employees
+#     ORDER BY %value = :order
+#     """, {'order': tmp}).fetchall()
+#     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
+#         x['FirstName'], "city": x['City']} for x in employees]}
