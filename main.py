@@ -52,24 +52,29 @@ async def products(id: int):
 
 @app.get("/employees")
 async def employees(limit: int, offset: int, order: str = "EmployeeID"):
-    app.db_connection.row_factory = sqlite3.Row
     if order != "EmployeeID":
         if order == "first_name":
-            order = "FirstName"
+            tmp = "FirstName"
         elif order == "last_name":
-            order = "LastName"
+            tmp = "LastName"
         elif order == "city":
-            order = "City"
+            tmp = "City"
         else:
             raise HTTPException(status_code=400)
     else:
-        order = "EmployeeID"
+        tmp = "EmployeeID"
 
-    employees = app.db_connection.execute("""
+    app.db_connection.row_factory = sqlite3.Row
+    employees = app.db_connection.execute(f"""
     SELECT EmployeeID, LastName, FirstName, City FROM Employees
-    ORDER BY ?
-    LIMIT ? OFFSET ?
-    """, (order, limit, offset, )).fetchall()
+    ORDER BY {tmp}
+    LIMIT {limit} OFFSET {offset}
+    """).fetchall()
 
+    # employees = app.db_connection.execute("""
+    # SELECT EmployeeID, LastName, FirstName, City FROM Employees
+    # ORDER BY ?
+    # LIMIT ? OFFSET ?
+    # """, (tmp, limit, offset, )).fetchall()
     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
         x['FirstName'], "city": x['City']} for x in employees]}
