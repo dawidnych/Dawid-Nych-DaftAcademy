@@ -95,7 +95,8 @@ async def product_id_orders(id: int):
     SELECT Orders.OrderID, "Order Details".Quantity, Customers.CompanyName, 
     ("Order Details".UnitPrice*"Order Details".Quantity)-("Order Details".Discount*
     ("Order Details".UnitPrice*"Order Details".Quantity)) AS total_price
-    FROM Orders JOIN "Order Details" ON Orders.OrderID = "Order Details".OrderID
+    FROM Orders 
+    JOIN "Order Details" ON Orders.OrderID = "Order Details".OrderID
     JOIN Customers ON Orders.CustomerID = Customers.CustomerID
     WHERE "Order Details".ProductID = :id
     ORDER BY Orders.OrderID
