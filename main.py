@@ -36,7 +36,7 @@ async def customers():
     ORDER BY CustomerID
     """).fetchall()
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
-        f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
+        " ".join(f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}".split())} for x in customers]}
 
 
 def product_ids():
