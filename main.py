@@ -52,10 +52,7 @@ async def products(id: int):
 
 
 @app.get("/employees")
-async def employees(limit: int, offset: int, order: str = "EmployeeID"):
-    if limit is None or offset is None:
-        raise HTTPException(status_code=400)
-
+async def employees(limit: int, offset: Optional[int] = 0, order: str = "EmployeeID"):
     if order != "EmployeeID":
         if order == "first_name":
             order = "FirstName"
