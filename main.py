@@ -29,34 +29,14 @@ async def categories():
 
 @app.get("/customers")
 async def customers():
-    # I. Jeśli wartość = null dodaje ją jako None do adresu:
     app.db_connection.row_factory = sqlite3.Row
-    # customers = app.db_connection.execute("""
-    #     SELECT CustomerID, CompanyName, Address, PostalCode, City, Country FROM Customers
-    #     ORDER BY CustomerID
-    #     """).fetchall()
-
-    # II. Jeśli któraś wartość = null, zastępuje ją pustym stringiem
-    # app.db_connection.row_factory = sqlite3.Row
     customers = app.db_connection.execute("""
     SELECT CustomerID, CompanyName, IFNULL(Address, '') Address, IFNULL(PostalCode, '') PostalCode,
     IFNULL(City, '') City, IFNULL(Country, '') Country FROM Customers
     ORDER BY CAST(CustomerID as INTEGER)
     """).fetchall()
-
-    # III. Daje null jako adres, jeśli jedna z wartości jest null:
-    # customers = app.db_connection.execute("""
-    # SELECT CustomerID, CompanyName, Address || ' ' || PostalCode || ' ' || City || ' ' || Country
-    # AS FullAddress FROM Customers
-    # ORDER BY CustomerID
-    # """).fetchall()
-
     return {"customers": [{"id": x['CustomerID'], "name": x['CompanyName'], "full_address":
-        # ad I i II:
-        f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in
-                          customers]}
-        # ad III:
-        # x['FullAddress']} for x in customers]}
+        f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in customers]}
 
 
 @app.get("/products/{id}")
@@ -71,24 +51,24 @@ async def products(id: int):
 
 
 # # limit: int, offset: int,
-# @app.get("/employees")
-# async def employees(order: str = "EmployeeID"):
-#     app.db_connection.row_factory = sqlite3.Row
-#     if order != "EmployeeID":
-#         if order == "first_name":
-#             tmp = "FirstName"
-#         elif order == "last_name":
-#             tmp = "LastName"
-#         elif order == "city":
-#             tmp = "City"
-#         else:
-#             raise HTTPException(status_code=400)
-#     else:
-#         tmp = "EmployeeID"
-#
-#     employees = app.db_connection.execute("""
-#     SELECT EmployeeID, LastName, FirstName, City FROM Employees
-#     ORDER BY %value = :order
-#     """, {'order': tmp}).fetchall()
-#     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
-#         x['FirstName'], "city": x['City']} for x in employees]}
+@app.get("/employees")
+async def employees(order: str = "EmployeeID"):
+    app.db_connection.row_factory = sqlite3.Row
+    if order != "EmployeeID":
+        if order == "first_name":
+            tmp = "FirstName"
+        elif order == "last_name":
+            tmp = "LastName"
+        elif order == "city":
+            tmp = "City"
+        else:
+            raise HTTPException(status_code=400)
+    else:
+        tmp = "EmployeeID"
+
+    employees = app.db_connection.execute("""
+    SELECT EmployeeID, LastName, FirstName, City FROM Employees
+    ORDER BY %value = :order
+    """, {'order': tmp}).fetchall()
+    return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
+        x['FirstName'], "city": x['City']} for x in employees]}
