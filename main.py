@@ -77,7 +77,7 @@ async def employees(limit: Optional[int] = -1, offset: Optional[int] = 0, order:
 @app.get("/products_extended")
 async def products_extended():
     app.db_connection.row_factory = sqlite3.Row
-    employees = app.db_connection.execute("""
+    products = app.db_connection.execute("""
        SELECT Products.ProductID, Products.ProductName, Categories.CategoryName, 
        Suppliers.CompanyName FROM Products
        JOIN Categories ON Products.CategoryID = Categories.CategoryID
@@ -85,4 +85,22 @@ async def products_extended():
        ORDER BY Products.ProductID
        """).fetchall()
     return {"products_extended": [{"id": x['ProductID'], "name": x['ProductName'], "category":
-        x['CategoryName'], "supplier": x['CompanyName']} for x in employees]}
+        x['CategoryName'], "supplier": x['CompanyName']} for x in products]}
+
+
+@app.get("/products/{id}/orders")
+async def product_id_orders(id: int):
+    app.db_connection.row_factory = sqlite3.Row
+    orders = app.db_connection.execute("""
+    SELECT Orders.OrderID, "Order Details".Quantity, Products.ProductID, Customers.CompanyName,
+    ("Order Details".UnitPrice*"Order Details".Quantity)-("Order Details".Discount*
+    ("Order Details".UnitPrice*"Order Details".Quantity)) AS total_price
+    FROM Orders JOIN "Order Details" ON Orders.OrderID = "Order Details".OrderID
+    JOIN Products ON "Order Details".OrderID = Orders.OrderID
+    JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+    WHERE Products.ProductID = :id
+    """, {'id': id}).fetchall()
+    if orders:
+        return {"orders": [{"id": x['OrderId'], "customer": x['CompanyName'], "quantity":
+            x['Quantity'], "total_price": round(x['total_price'], 2)} for x in orders]}
+    raise HTTPException(status_code=404)
