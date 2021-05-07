@@ -1,7 +1,8 @@
 import sqlite3
 
-from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from typing import Optional
 
 
 app = FastAPI()
@@ -52,22 +53,23 @@ async def products(id: int):
 
 @app.get("/employees")
 async def employees(limit: int, offset: int, order: str = "EmployeeID"):
+    if limit is None or offset is None:
+        raise HTTPException(status_code=400)
+
     if order != "EmployeeID":
         if order == "first_name":
-            tmp = "FirstName"
+            order = "FirstName"
         elif order == "last_name":
-            tmp = "LastName"
+            order = "LastName"
         elif order == "city":
-            tmp = "City"
+            order = "City"
         else:
             raise HTTPException(status_code=400)
-    else:
-        tmp = "EmployeeID"
 
     app.db_connection.row_factory = sqlite3.Row
     employees = app.db_connection.execute(f"""
     SELECT EmployeeID, LastName, FirstName, City FROM Employees
-    ORDER BY {tmp}
+    ORDER BY {order}
     LIMIT {limit} OFFSET {offset}
     """).fetchall()
 
