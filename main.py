@@ -92,13 +92,13 @@ async def products_extended():
 async def product_id_orders(id: int):
     app.db_connection.row_factory = sqlite3.Row
     orders = app.db_connection.execute("""
-    SELECT Orders.OrderID, "Order Details".Quantity, Products.ProductID, Customers.CompanyName,
+    SELECT Orders.OrderID, "Order Details".Quantity, Customers.CompanyName, 
     ("Order Details".UnitPrice*"Order Details".Quantity)-("Order Details".Discount*
     ("Order Details".UnitPrice*"Order Details".Quantity)) AS total_price
     FROM Orders JOIN "Order Details" ON Orders.OrderID = "Order Details".OrderID
-    JOIN Products ON "Order Details".OrderID = Orders.OrderID
     JOIN Customers ON Orders.CustomerID = Customers.CustomerID
-    WHERE Products.ProductID = :id
+    WHERE "Order Details".ProductID = :id
+    ORDER BY Orders.OrderID
     """, {'id': id}).fetchall()
     if orders:
         return {"orders": [{"id": x['OrderId'], "customer": x['CompanyName'], "quantity":
