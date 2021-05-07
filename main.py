@@ -52,7 +52,7 @@ async def products(id: int):
 
 
 @app.get("/employees")
-async def employees(limit: int, offset: Optional[int] = 0, order: str = "EmployeeID"):
+async def employees(limit: Optional[int] = -1, offset: Optional[int] = 0, order: str = "EmployeeID"):
     if order != "EmployeeID":
         if order == "first_name":
             order = "FirstName"
