@@ -70,10 +70,19 @@ async def employees(limit: Optional[int] = -1, offset: Optional[int] = 0, order:
     LIMIT {limit} OFFSET {offset}
     """).fetchall()
 
-    # employees = app.db_connection.execute("""
-    # SELECT EmployeeID, LastName, FirstName, City FROM Employees
-    # ORDER BY ?
-    # LIMIT ? OFFSET ?
-    # """, (tmp, limit, offset, )).fetchall()
     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
         x['FirstName'], "city": x['City']} for x in employees]}
+
+
+@app.get("/products_extended")
+async def products_extended():
+    app.db_connection.row_factory = sqlite3.Row
+    employees = app.db_connection.execute("""
+       SELECT Products.ProductID, Products.ProductName, Categories.CategoryName, 
+       Suppliers.CompanyName FROM Products
+       JOIN Categories ON Products.CategoryID = Categories.CategoryID
+       JOIN Suppliers ON Products.SupplierID = Suppliers.SupplierID
+       ORDER BY Products.ProductID
+       """).fetchall()
+    return {"products_extended": [{"id": x['ProductID'], "name": x['ProductName'], "category":
+        x['CategoryName'], "supplier": x['CompanyName']} for x in employees]}
