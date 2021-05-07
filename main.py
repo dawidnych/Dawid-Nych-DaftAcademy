@@ -65,10 +65,11 @@ async def employees(limit: int, offset: int, order: str = "EmployeeID"):
     else:
         order = "EmployeeID"
 
-    employees = app.db_connection.execute(f"""
+    employees = app.db_connection.execute("""
     SELECT EmployeeID, LastName, FirstName, City FROM Employees
-    ORDER BY CAST({order} as INTEGER)
-    LIMIT {limit} OFFSET {offset}
-    """).fetchall()
+    ORDER BY ?
+    LIMIT ? OFFSET ?
+    """, (order, limit, offset, )).fetchall()
+
     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
         x['FirstName'], "city": x['City']} for x in employees]}
