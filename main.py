@@ -67,7 +67,7 @@ async def employees(limit: int, offset: int, order: str = "EmployeeID"):
 
     employees = app.db_connection.execute(f"""
     SELECT EmployeeID, LastName, FirstName, City FROM Employees
-    ORDER BY {order}
+    ORDER BY CAST({order} as INTEGER)
     LIMIT {limit} OFFSET {offset}
     """).fetchall()
     return {"employees": [{"id": x['EmployeeID'], "last_name": x['LastName'], "first_name":
