@@ -3,6 +3,7 @@ import sqlite3
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -104,4 +105,48 @@ async def product_id_orders(id: int):
     if orders:
         return {"orders": [{"id": x['OrderId'], "customer": x['CompanyName'], "quantity":
             x['Quantity'], "total_price": round(x['total_price'], 2)} for x in orders]}
+    raise HTTPException(status_code=404)
+
+
+class Customer(BaseModel):
+    name: str
+
+
+@app.post("/categories", status_code=201)
+async def categories_post(customer: Customer):
+    cursor = app.db_connection.execute(
+        f"INSERT INTO Categories (CategoryName) VALUES ('{customer.name}')"
+    )
+    app.db_connection.commit()
+    return {
+        "id": cursor.lastrowid,
+        "name": customer.name
+    }
+
+
+@app.put("/categories/{id}")
+async def categories_edit(id: int, customer: Customer):
+    id_check = app.db_connection.execute("SELECT CategoryID FROM Categories WHERE CategoryID = ?",
+                                         (id,)).fetchone()
+    if id_check:
+        app.db_connection.execute("UPDATE Categories SET CategoryName = ? WHERE CategoryID = ?",
+                                  (customer.name, id))
+        app.db_connection.commit()
+        return {
+            "id": id,
+            "name": customer.name
+        }
+    raise HTTPException(status_code=404)
+
+
+@app.delete("/categories/{id}")
+async def categories_delete(id: int):
+    id_check = app.db_connection.execute("SELECT CategoryID FROM Categories WHERE CategoryID = ?",
+                                         (id,)).fetchone()
+    if id_check:
+        cursor = app.db_connection.execute(
+            "DELETE FROM Categories WHERE CategoryID = ?", (id,)
+        )
+        app.db_connection.commit()
+        return {"deleted": cursor.rowcount}
     raise HTTPException(status_code=404)
