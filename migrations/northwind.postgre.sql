@@ -3846,6 +3846,24 @@ ALTER TABLE ONLY territories
 
 
 --
+-- Name: fk_products_supplier; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_supplier FOREIGN KEY ("SupplierID") REFERENCES suppliers("SupplierID");
+
+
+--
+-- Name: fk_products_categories; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_categories FOREIGN KEY ("CategoryID") REFERENCES categories("CategoryID");
+
+
+--
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
 
@@ -3858,4 +3876,3 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
-
