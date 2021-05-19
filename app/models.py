@@ -1,6 +1,7 @@
 # coding: utf-8
 from sqlalchemy import CHAR, Column, Date, Float, Integer, LargeBinary, SmallInteger, String, \
     Table, Text, text, ForeignKey
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
