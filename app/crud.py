@@ -9,16 +9,16 @@ def get_suppliers(db: Session):
     return db.query(models.Supplier).order_by(models.Supplier.SupplierID).all()
 
 
-def get_supplier(db: Session, supplier_id=int):
+def get_supplier(db: Session, supplier_id: int):
     return db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id).first()
 
 
-def get_supplier_product(db: Session, supplier_id=int):
+def get_supplier_product(db: Session, supplier_id: int):
     return db.query(models.Product).join(models.Category).filter(
         models.Product.SupplierID == supplier_id).order_by(models.Product.ProductID.desc()).all()
 
 
-def post_supplier(db: Session, new_supplier=SupplierPost):
+def post_supplier(db: Session, new_supplier: SupplierPost):
     new_id = db.query(models.Supplier).count()+1
     output = models.Supplier(SupplierID=new_id, CompanyName=new_supplier.CompanyName,
                              ContactName=new_supplier.ContactName,
